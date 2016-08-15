@@ -646,6 +646,10 @@ config TARGET_PCM052
 	bool "Support pcm-052"
 	select CPU_V7
 
+config TARGET_DSVSOM_1189
+	bool "Support DSVSOM-1189 (RAP)"
+	select CPU_V7
+
 config ARCH_ZYNQ
 	bool "Xilinx Zynq Platform"
 	select CPU_V7
@@ -928,6 +932,7 @@ source "board/compulab/cm_t43/Kconfig"
 source "board/creative/xfi3/Kconfig"
 source "board/denx/m28evk/Kconfig"
 source "board/denx/m53evk/Kconfig"
+source "board/datasoft/dsvsom-1189/Kconfig"
 source "board/freescale/ls2080a/Kconfig"
 source "board/freescale/ls2080aqds/Kconfig"
 source "board/freescale/ls2080ardb/Kconfig"
