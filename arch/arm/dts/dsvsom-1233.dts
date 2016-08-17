@@ -1,0 +1,13 @@
+/*
+ * Copyright 2016 DataSoft Corp
+ *
+ * SPDX-License-Identifier:     GPL-2.0+ or X11
+ */
+
+/dts-v1/;
+#include "dsvsom.dtsi"
+
+/ {
+	model = "DataSoft DSVSOM-1233";
+	compatible = "datasoft,vf610-dsvsom_1233", "fsl,vf610";
+};
