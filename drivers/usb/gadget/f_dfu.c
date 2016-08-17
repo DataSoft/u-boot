@@ -151,7 +151,19 @@ static void dfu_set_poll_timeout(struct dfu_status *dstat, unsigned int ms)
 	dstat->bwPollTimeout[2] = *p;
 }
 
+static bool has_begun = false;
+
 /*-------------------------------------------------------------------------*/
+
+void new_dfu( void )
+{
+    has_begun = false;
+}
+
+bool dfu_has_begun( void )
+{
+    return has_begun;
+}
 
 static void dnload_request_complete(struct usb_ep *ep, struct usb_request *req)
 {
@@ -322,6 +334,7 @@ static int state_dfu_idle(struct f_dfu *f_dfu,
 
 	switch (ctrl->bRequest) {
 	case USB_REQ_DFU_DNLOAD:
+                has_begun = true;
 		if (len == 0) {
 			f_dfu->dfu_state = DFU_STATE_dfuERROR;
 			value = RET_STALL;

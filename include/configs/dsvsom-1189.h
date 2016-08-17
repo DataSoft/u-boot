@@ -88,7 +88,8 @@
 	"ubifsload ${fdt_addr_r} /boot/${soc}-colibri-${fdt_board}.dtb && " \
 	"bootz ${kernel_addr_r} - ${fdt_addr_r}\0" \
 
-#define CONFIG_BOOTCOMMAND "run ubiboot"
+#define DFU_BOOT_DELAY "1" /* How long to wait for dfu activity before booting from nand*/
+#define CONFIG_BOOTCOMMAND "dfu 0 nand 0 " DFU_BOOT_DELAY "; run ubiboot"
 
 #define DFU_ALT_NAND_INFO "vf-bcb part 0,1;u-boot part 0,2;ubi part 0,4"
 

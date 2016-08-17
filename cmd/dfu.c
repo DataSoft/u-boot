@@ -18,6 +18,7 @@
 #include <g_dnl.h>
 #include <usb.h>
 #include <net.h>
+#include <cli.h>
 
 static int do_dfu(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
@@ -39,13 +40,18 @@ static int do_dfu(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 
 		return update_tftp(addr, interface, devstring);
 	}
+#else
+        unsigned int timeout = 0xFFFFFFFF;
+        unsigned long start_time = get_timer(0);
+        if (argc == 5) {
+            timeout = simple_strtoul(argv[4], NULL, 0);
+        }
 #endif
 
 	ret = dfu_init_env_entities(interface, devstring);
 	if (ret)
 		goto done;
 
-	ret = CMD_RET_SUCCESS;
 	if (argc > 4 && strcmp(argv[4], "list") == 0) {
 		dfu_show_entities();
 		goto done;
@@ -54,8 +60,14 @@ static int do_dfu(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 	int controller_index = simple_strtoul(usb_controller, NULL, 0);
 	board_usb_init(controller_index, USB_INIT_DEVICE);
 	g_dnl_clear_detach();
-	g_dnl_register("usb_dnl_dfu");
-	while (1) {
+
+        ret = g_dnl_register("usb_dnl_dfu");
+	if (ret)
+            goto exit;
+
+        new_dfu();
+
+	while (true) {
 		if (g_dnl_detach()) {
 			/*
 			 * Check if USB bus reset is performed after detach,
@@ -77,7 +89,13 @@ static int do_dfu(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 		}
 
 		if (ctrlc())
-			goto exit;
+		        goto exit;
+
+                // If a DFU transaction hasn't begun within the timeout, bail....
+                if (!dfu_has_begun() && (get_timer(start_time) >= (timeout*1000)))
+                {
+                    goto exit;
+                }
 
 		if (dfu_get_defer_flush()) {
 			/*
@@ -118,10 +136,10 @@ done:
 
 U_BOOT_CMD(dfu, CONFIG_SYS_MAXARGS, 1, do_dfu,
 	"Device Firmware Upgrade",
-	"<USB_controller> <interface> <dev> [list]\n"
+	"<USB_controller> <interface> <dev> [timeout] [list]\n"
 	"  - device firmware upgrade via <USB_controller>\n"
-	"    on device <dev>, attached to interface\n"
-	"    <interface>\n"
+	"    on <dev>, attached to <interface>\n"
+        "    [timeout] - Only wait [timeout] seconds. Default is -1: wait forever\n"
 	"    [list] - list available alt settings\n"
 #ifdef CONFIG_DFU_TFTP
 	"dfu tftp <interface> <dev> [<addr>]\n"
