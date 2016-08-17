@@ -557,15 +557,7 @@ int board_usb_phy_mode(int port)
 {
 	switch (port) {
 	case 0:
-		/*
-		 * Port 0 is used only in client mode on Colibri Vybrid modules
-		 * Check for state of USB client gpio pin and accordingly return
-		 * USB_INIT_DEVICE or USB_INIT_HOST.
-		 */
-		if (gpio_get_value(USB_CDET_GPIO))
-			return USB_INIT_DEVICE;
-		else
-			return USB_INIT_HOST;
+	        return USB_INIT_DEVICE;
 	case 1:
 		/* Port 1 is used only in host mode on Colibri Vybrid modules */
 		return USB_INIT_HOST;
