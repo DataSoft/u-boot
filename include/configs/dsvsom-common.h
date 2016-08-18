@@ -71,10 +71,15 @@
 #define CONFIG_MTD_PARTITIONS
 #define CONFIG_MTD_DEVICE	/* needed for mtdparts commands */
 #define MTDIDS_DEFAULT		"nand0=vf610_nfc"
-#define MTDPARTS_DEFAULT	"mtdparts=vf610_nfc:"		\
-				"128k(vf-bcb)ro,"		\
-				"1408k(u-boot)ro,"		\
-				"512k(u-boot-env),"		\
+/* WARNING: This needs to match the DFU_ALT_NAND_INFO macro below*/
+#define MTDPARTS_DEFAULT	"mtdparts=vf610_nfc:"	\
+				"256k(vf-bcb)ro,"	\
+				"512k(u-boot)ro,"	\
+				"128k(u-boot-env),"	\
+                                "128k(fdt),"            \
+                                "8m(kernel-image),"     \
+                                "8m(user-data),"        \
+                                "238m(rootfs),"         \
 				"-(ubi)"
 
 #define CONFIG_RBTREE
@@ -106,7 +111,14 @@
 #define DFU_BOOT_DELAY "1" /* How long to wait for dfu activity before booting from nand*/
 #define CONFIG_BOOTCOMMAND "dfu 0 nand 0 " DFU_BOOT_DELAY "; run ubiboot"
 
-#define DFU_ALT_NAND_INFO "vf-bcb part 0,1;u-boot part 0,2;ubi part 0,4"
+/* WARNING: This needs to match the MTDPARTS_DEFAULT macro above*/
+#define DFU_ALT_NAND_INFO       "vf-bcb part 0,1;"              \
+                                "u-boot part 0,2;"              \
+                                "fdt part 0,4;"                 \
+                                "kernel-image part 0,5;"        \
+                                "user-data part 0,6;"           \
+                                "rootfs part 0,7;"              \
+                                "ubi part 0,8"
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	"kernel_addr_r=0x82000000\0" \
