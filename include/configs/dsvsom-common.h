@@ -79,8 +79,7 @@
                                 "128k(fdt),"            \
                                 "8m(kernel-image),"     \
                                 "8m(user-data),"        \
-                                "238m(rootfs),"         \
-				"-(ubi)"
+                                "-(rootfs)"             \
 
 #define CONFIG_RBTREE
 #define CONFIG_LZO
@@ -98,14 +97,13 @@
 #define CONFIG_BOARD_SIZE_LIMIT		524288
 
 #define UBI_BOOTCMD	\
-	"ubiargs=ubi.mtd=ubi root=ubi0:rootfs rootfstype=ubifs " \
+	"ubiargs=rw ubi.mtd=rootfs root=ubi0:ubi-rootfs rootfstype=ubifs " \
 	"ubi.fm_autoconvert=1\0" \
 	"ubiboot=run setup; " \
 	"setenv bootargs ${defargs} ${ubiargs} ${mtdparts} "   \
-	"${setupargs} ${vidargs}; echo Booting from NAND...; " \
-	"ubi part ubi && ubifsmount ubi0:rootfs && " \
-	"ubifsload ${kernel_addr_r} /boot/${kernel_file} && " \
-	"ubifsload ${fdt_addr_r} /boot/${soc}-colibri-${fdt_board}.dtb && " \
+	"${setupargs}; echo Booting from NAND...; " \
+	"nand read ${kernel_addr_r} ${kernel_partition}; " \
+	"nand read ${fdt_addr_r} ${fdt_partition}; " \
 	"bootz ${kernel_addr_r} - ${fdt_addr_r}\0" \
 
 #define DFU_BOOT_DELAY "1" /* How long to wait for dfu activity before booting from nand*/
@@ -117,18 +115,18 @@
                                 "fdt part 0,4;"                 \
                                 "kernel-image part 0,5;"        \
                                 "user-data part 0,6;"           \
-                                "rootfs part 0,7;"              \
-                                "ubi part 0,8"
+                                "rootfs part 0,7"               \
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	"kernel_addr_r=0x82000000\0" \
 	"fdt_addr_r=0x84000000\0" \
-	"kernel_file=zImage\0" \
-	"defargs=\0" \
+	"kernel_partition=kernel-image\0" \
+	"fdt_partition=fdt\0" \
 	"console=ttyLP2\0" \
 	"setup=setenv setupargs " \
-	"console=tty1 console=${console}" \
-	",${baudrate}n8 ${memargs}\0" \
+	"console=${console},${baudrate}n8 ${memargs}; " \
+	"setenv defargs " \
+	"g_cdc.host_addr=${eth2addr} g_cdc.dev_addr=${eth3addr} ds_serial=${serial}\0" \
 	"mtdparts=" MTDPARTS_DEFAULT "\0" \
 	"dfu_alt_info=" DFU_ALT_NAND_INFO "\0" \
 	UBI_BOOTCMD
