@@ -116,6 +116,8 @@ struct anadig_reg {
 #define CCM_CCR_OSCNT_MASK			0xff
 #define CCM_CCR_OSCNT(v)			((v) & 0xff)
 
+#define CCM_CCSR_DAP_EN                         (1 << 24)
+
 #define CCM_CCSR_PLL2_PFD_CLK_SEL_OFFSET	19
 #define CCM_CCSR_PLL2_PFD_CLK_SEL_MASK		(0x7 << 19)
 #define CCM_CCSR_PLL2_PFD_CLK_SEL(v)		(((v) & 0x7) << 19)
@@ -135,6 +137,7 @@ struct anadig_reg {
 
 #define CCM_CCSR_DDRC_CLK_SEL(v)		((v) << 6)
 #define CCM_CCSR_FAST_CLK_SEL(v)		((v) << 5)
+#define CCM_CCSR_SLOW_CLK_SEL(v)		((v) << 4)
 
 #define CCM_CCSR_SYS_CLK_SEL_OFFSET		0
 #define CCM_CCSR_SYS_CLK_SEL_MASK		0x7
@@ -187,6 +190,8 @@ struct anadig_reg {
 #define CCM_CSCMR2_RMII_CLK_SEL(v)		(((v) & 0x3) << 4)
 
 #define CCM_REG_CTRL_MASK			0xffffffff
+#define CCM_CCGR0_DMA0_CTRL_MASK                (0x3 << 8)
+#define CCM_CCGR0_DMA1_CTRL_MASK		(0x3 << 10)
 #define CCM_CCGR0_UART0_CTRL_MASK               (0x3 << 14)
 #define CCM_CCGR0_UART1_CTRL_MASK		(0x3 << 16)
 #define CCM_CCGR0_UART2_CTRL_MASK		(0x3 << 18)
@@ -210,12 +215,15 @@ struct anadig_reg {
 #define CCM_CCGR4_GPC_CTRL_MASK			(0x3 << 24)
 #define CCM_CCGR4_I2C0_CTRL_MASK		(0x3 << 12)
 #define CCM_CCGR4_I2C1_CTRL_MASK		(0x3 << 14)
+#define CCM_CCGR6_DMA2_CTRL_MASK		(0x3 << 2)
+#define CCM_CCGR6_DMA3_CTRL_MASK		(0x3 << 4)
 #define CCM_CCGR6_OCOTP_CTRL_MASK		(0x3 << 10)
 #define CCM_CCGR6_DSPI2_CTRL_MASK		(0x3 << 24)
 #define CCM_CCGR6_DSPI3_CTRL_MASK		(0x3 << 26)
 #define CCM_CCGR6_DDRMC_CTRL_MASK		(0x3 << 28)
+#define CCM_CCGR7_SDHC0_CTRL_MASK		(0x3 << 2)
 #define CCM_CCGR7_SDHC1_CTRL_MASK		(0x3 << 4)
-#define CCM_CCGR7_USBC1_CTRL_MASK       (0x3 << 8)
+#define CCM_CCGR7_USBC1_CTRL_MASK               (0x3 << 8)
 #define CCM_CCGR9_FEC0_CTRL_MASK		0x3
 #define CCM_CCGR9_FEC1_CTRL_MASK		(0x3 << 2)
 #define CCM_CCGR10_NFC_CTRL_MASK		0x3

@@ -162,12 +162,14 @@ int dram_init(void)
 static void setup_iomux_uart(void)
 {
 	static const iomux_v3_cfg_t uart_pads[] = {
-		NEW_PAD_CTRL(VF610_PAD_PTB4__UART1_TX, UART_PAD_CTRL),
-		NEW_PAD_CTRL(VF610_PAD_PTB5__UART1_RX, UART_PAD_CTRL),
 		NEW_PAD_CTRL(VF610_PAD_PTB10__UART0_TX, UART_PAD_CTRL),
 		NEW_PAD_CTRL(VF610_PAD_PTB11__UART0_RX, UART_PAD_CTRL),
+		NEW_PAD_CTRL(VF610_PAD_PTB12__UART0_RTS, UART_PAD_CTRL),
+		NEW_PAD_CTRL(VF610_PAD_PTB13__UART0_CTS, UART_PAD_CTRL),
 		NEW_PAD_CTRL(VF610_PAD_PTD0__UART2_TX, UART_PAD_CTRL),
 		NEW_PAD_CTRL(VF610_PAD_PTD1__UART2_RX, UART_PAD_CTRL),
+                NEW_PAD_CTRL(VF610_PAD_PTA20__UART3_TX, UART_PAD_CTRL),
+                NEW_PAD_CTRL(VF610_PAD_PTA21__UART3_RX, UART_PAD_CTRL),
 	};
 
 	imx_iomux_v3_setup_multiple_pads(uart_pads, ARRAY_SIZE(uart_pads));
@@ -175,10 +177,10 @@ static void setup_iomux_uart(void)
 
 static void setup_iomux_enet(void)
 {
-	static const iomux_v3_cfg_t enet0_pads[] = {
+	static const iomux_v3_cfg_t enet_pads[] = {
 		NEW_PAD_CTRL(VF610_PAD_PTA6__RMII0_CLKOUT, ENET_PAD_CTRL),
-		NEW_PAD_CTRL(VF610_PAD_PTC10__RMII1_MDIO, ENET_PAD_CTRL),
 		NEW_PAD_CTRL(VF610_PAD_PTC9__RMII1_MDC, ENET_PAD_CTRL),
+		NEW_PAD_CTRL(VF610_PAD_PTC10__RMII1_MDIO, ENET_PAD_CTRL),
 		NEW_PAD_CTRL(VF610_PAD_PTC11__RMII1_CRS_DV, ENET_PAD_CTRL),
 		NEW_PAD_CTRL(VF610_PAD_PTC12__RMII1_RD1, ENET_PAD_CTRL),
 		NEW_PAD_CTRL(VF610_PAD_PTC13__RMII1_RD0, ENET_PAD_CTRL),
@@ -188,23 +190,31 @@ static void setup_iomux_enet(void)
 		NEW_PAD_CTRL(VF610_PAD_PTC17__RMII1_TXEN, ENET_PAD_CTRL),
 	};
 
-	imx_iomux_v3_setup_multiple_pads(enet0_pads, ARRAY_SIZE(enet0_pads));
+	imx_iomux_v3_setup_multiple_pads(enet_pads, ARRAY_SIZE(enet_pads));
 }
 
 static void setup_iomux_i2c(void)
 {
-	static const iomux_v3_cfg_t i2c0_pads[] = {
-		VF610_PAD_PTB14__I2C0_SCL,
-		VF610_PAD_PTB15__I2C0_SDA,
+	static const iomux_v3_cfg_t i2c1_pads[] = {
+		VF610_PAD_PTE27__I2C1_SCL,
+		VF610_PAD_PTE28__I2C1_SDA,
 	};
 
-	imx_iomux_v3_setup_multiple_pads(i2c0_pads, ARRAY_SIZE(i2c0_pads));
+	imx_iomux_v3_setup_multiple_pads(i2c1_pads, ARRAY_SIZE(i2c1_pads));
 }
 
 #ifdef CONFIG_NAND_VF610_NFC
 static void setup_iomux_nfc(void)
 {
 	static const iomux_v3_cfg_t nfc_pads[] = {
+                VF610_PAD_PTD31__NF_IO15,
+                VF610_PAD_PTD30__NF_IO14,
+                VF610_PAD_PTD29__NF_IO13,
+                VF610_PAD_PTD28__NF_IO12,
+                VF610_PAD_PTD27__NF_IO11,
+                VF610_PAD_PTD26__NF_IO10,
+                VF610_PAD_PTD25__NF_IO9,
+                VF610_PAD_PTD24__NF_IO8,
 		VF610_PAD_PTD23__NF_IO7,
 		VF610_PAD_PTD22__NF_IO6,
 		VF610_PAD_PTD21__NF_IO5,
@@ -225,70 +235,32 @@ static void setup_iomux_nfc(void)
 }
 #endif
 
-#ifdef CONFIG_FSL_DSPI
-static void setup_iomux_dspi(void)
-{
-	static const iomux_v3_cfg_t dspi1_pads[] = {
-		VF610_PAD_PTD5__DSPI1_CS0,
-		VF610_PAD_PTD6__DSPI1_SIN,
-		VF610_PAD_PTD7__DSPI1_SOUT,
-		VF610_PAD_PTD8__DSPI1_SCK,
-	};
-
-	imx_iomux_v3_setup_multiple_pads(dspi1_pads, ARRAY_SIZE(dspi1_pads));
-}
-#endif
-
 #ifdef CONFIG_VYBRID_GPIO
 static void setup_iomux_gpio(void)
 {
 	static const iomux_v3_cfg_t gpio_pads[] = {
-		VF610_PAD_PTA17__GPIO_7,
-		VF610_PAD_PTA20__GPIO_10,
-		VF610_PAD_PTA21__GPIO_11,
-		VF610_PAD_PTA30__GPIO_20,
-		VF610_PAD_PTA31__GPIO_21,
-		VF610_PAD_PTB0__GPIO_22,
-		VF610_PAD_PTB1__GPIO_23,
-		VF610_PAD_PTB2__GPIO_24,
-		VF610_PAD_PTB6__GPIO_28,
-		VF610_PAD_PTB7__GPIO_29,
-		VF610_PAD_PTB8__GPIO_30,
-		VF610_PAD_PTB9__GPIO_31,
-		VF610_PAD_PTB12__GPIO_34,
-		VF610_PAD_PTB13__GPIO_35,
-		VF610_PAD_PTB16__GPIO_38,
-		VF610_PAD_PTB17__GPIO_39,
-		VF610_PAD_PTB18__GPIO_40,
-		VF610_PAD_PTB21__GPIO_43,
-		VF610_PAD_PTB22__GPIO_44,
-		VF610_PAD_PTC0__GPIO_45,
-		VF610_PAD_PTC1__GPIO_46,
-		VF610_PAD_PTC2__GPIO_47,
-		VF610_PAD_PTC3__GPIO_48,
-		VF610_PAD_PTC4__GPIO_49,
-		VF610_PAD_PTC5__GPIO_50,
-		VF610_PAD_PTC6__GPIO_51,
-		VF610_PAD_PTC7__GPIO_52,
-		VF610_PAD_PTC8__GPIO_53,
-		VF610_PAD_PTD31__GPIO_63,
-		VF610_PAD_PTD30__GPIO_64,
-		VF610_PAD_PTD29__GPIO_65,
-		VF610_PAD_PTD28__GPIO_66,
-		VF610_PAD_PTD27__GPIO_67,
-		VF610_PAD_PTD26__GPIO_68,
-		VF610_PAD_PTD25__GPIO_69,
-		VF610_PAD_PTD24__GPIO_70,
-		VF610_PAD_PTD9__GPIO_88,
-		VF610_PAD_PTD10__GPIO_89,
-		VF610_PAD_PTD11__GPIO_90,
-		VF610_PAD_PTD12__GPIO_91,
-		VF610_PAD_PTD13__GPIO_92,
-		VF610_PAD_PTB23__GPIO_93,
-		VF610_PAD_PTB26__GPIO_96,
-		VF610_PAD_PTB28__GPIO_98,
-		VF610_PAD_PTC30__GPIO_103,
-		VF610_PAD_PTA7__GPIO_134,
+                VF610_PAD_PTA12__GPIO_5,        // PB_BT_MUTEN
+                VF610_PAD_PTA18__GPIO_8,        // ENET1_NRESET
+                VF610_PAD_PTA19__GPIO_9,        // ENET1_NIRQ_OUT
+		VF610_PAD_PTB0__GPIO_22,        // TIWI_BT_EN
+		VF610_PAD_PTB1__GPIO_23,        // TIWI_WL_EN
+		VF610_PAD_PTB2__GPIO_24,        // RX232_EN
+                VF610_PAD_PTB3__GPIO_25,        // EEP_WP
+		VF610_PAD_PTB6__GPIO_28,        // USB1_VBUS_DETECT
+		VF610_PAD_PTB7__GPIO_29,        // CONN_USB1_ID
+		VF610_PAD_PTB8__GPIO_30,        // TIWI_WLAN_NIRQ
+		VF610_PAD_PTB9__GPIO_31,        // TIWI_AUD_DIR
+                VF610_PAD_PTB14__GPIO_36,       // MCU_CPLD_SP0
+                VF610_PAD_PTB15__GPIO_37,       // MCU_CPLD_SP1
+                VF610_PAD_PTB16__GPIO_38,       // MCU_CPLD_SP2
+                VF610_PAD_PTB17__GPIO_39,       // MCU_CPLD_SP3
+		VF610_PAD_PTC6__GPIO_51,        // BT_MUTE_STAT_RED_LEDN
+		VF610_PAD_PTC7__GPIO_52,        // BT_MUTE_STAT_GRN_LEDN
+		VF610_PAD_PTC8__GPIO_53,        // BT_MUTE_STAT_BLU_LEDN
+                VF610_PAD_PTC29__GPIO_102,      // MCU_ZEROIZE
+                VF610_PAD_PTC30__GPIO_103,      // RAP_ACTIVE
+                VF610_PAD_PTC31__GPIO_104,      // MCU_CPLD_INITN
+		VF610_PAD_PTA7__GPIO_134,       // SRAM_STATUS
 	};
 
 	imx_iomux_v3_setup_multiple_pads(gpio_pads, ARRAY_SIZE(gpio_pads));
@@ -339,93 +311,66 @@ static inline int is_colibri_vf61(void)
 
 static void clock_init(void)
 {
-	struct ccm_reg *ccm = (struct ccm_reg *)CCM_BASE_ADDR;
+    	struct ccm_reg *ccm = (struct ccm_reg *)CCM_BASE_ADDR;
 	struct anadig_reg *anadig = (struct anadig_reg *)ANADIG_BASE_ADDR;
-	u32 pfd_clk_sel, ddr_clk_sel;
 
 	clrsetbits_le32(&ccm->ccgr0, CCM_REG_CTRL_MASK,
+			CCM_CCGR0_DMA0_CTRL_MASK  | CCM_CCGR0_DMA1_CTRL_MASK |
 			CCM_CCGR0_UART0_CTRL_MASK | CCM_CCGR0_UART1_CTRL_MASK |
 			CCM_CCGR0_UART2_CTRL_MASK | CCM_CCGR0_UART3_CTRL_MASK);
-#ifdef CONFIG_FSL_DSPI
-	setbits_le32(&ccm->ccgr0, CCM_CCGR0_DSPI1_CTRL_MASK);
-#endif
+
 	clrsetbits_le32(&ccm->ccgr1, CCM_REG_CTRL_MASK,
-			CCM_CCGR1_PIT_CTRL_MASK | CCM_CCGR1_WDOGA5_CTRL_MASK);
+			CCM_CCGR1_USBC0_CTRL_MASK | CCM_CCGR1_PIT_CTRL_MASK |
+                        CCM_CCGR1_WDOGA5_CTRL_MASK);
+
 	clrsetbits_le32(&ccm->ccgr2, CCM_REG_CTRL_MASK,
 			CCM_CCGR2_IOMUXC_CTRL_MASK | CCM_CCGR2_PORTA_CTRL_MASK |
-			CCM_CCGR2_PORTB_CTRL_MASK | CCM_CCGR2_PORTC_CTRL_MASK |
-			CCM_CCGR2_PORTD_CTRL_MASK | CCM_CCGR2_PORTE_CTRL_MASK);
-	clrsetbits_le32(&ccm->ccgr3, CCM_REG_CTRL_MASK,
-			CCM_CCGR3_ANADIG_CTRL_MASK | CCM_CCGR3_SCSC_CTRL_MASK);
+			CCM_CCGR2_PORTB_CTRL_MASK  | CCM_CCGR2_PORTC_CTRL_MASK |
+			CCM_CCGR2_PORTD_CTRL_MASK  | CCM_CCGR2_PORTE_CTRL_MASK);
+
+	clrsetbits_le32(&ccm->ccgr3, CCM_REG_CTRL_MASK,	CCM_CCGR3_ANADIG_CTRL_MASK );
+
 	clrsetbits_le32(&ccm->ccgr4, CCM_REG_CTRL_MASK,
 			CCM_CCGR4_WKUP_CTRL_MASK | CCM_CCGR4_CCM_CTRL_MASK |
-			CCM_CCGR4_GPC_CTRL_MASK | CCM_CCGR4_I2C0_CTRL_MASK);
+			CCM_CCGR4_GPC_CTRL_MASK  | CCM_CCGR4_I2C0_CTRL_MASK |
+                        CCM_CCGR4_I2C1_CTRL_MASK);
+
 	clrsetbits_le32(&ccm->ccgr6, CCM_REG_CTRL_MASK,
+                	CCM_CCGR6_DMA2_CTRL_MASK  | CCM_CCGR6_DMA3_CTRL_MASK |
 			CCM_CCGR6_OCOTP_CTRL_MASK | CCM_CCGR6_DDRMC_CTRL_MASK);
+
 	clrsetbits_le32(&ccm->ccgr7, CCM_REG_CTRL_MASK,
-			CCM_CCGR7_SDHC1_CTRL_MASK);
-	clrsetbits_le32(&ccm->ccgr9, CCM_REG_CTRL_MASK,
-			CCM_CCGR9_FEC0_CTRL_MASK | CCM_CCGR9_FEC1_CTRL_MASK);
-	clrsetbits_le32(&ccm->ccgr10, CCM_REG_CTRL_MASK,
-			CCM_CCGR10_NFC_CTRL_MASK);
+			CCM_CCGR7_SDHC0_CTRL_MASK | CCM_CCGR7_USBC1_CTRL_MASK);
 
-#ifdef CONFIG_CI_UDC
-	setbits_le32(&ccm->ccgr1, CCM_CCGR1_USBC0_CTRL_MASK);
-#endif
+	clrbits_le32(&ccm->ccgr9, CCM_REG_CTRL_MASK);
 
-#ifdef CONFIG_USB_EHCI
-	setbits_le32(&ccm->ccgr7, CCM_CCGR7_USBC1_CTRL_MASK);
-#endif
+	clrsetbits_le32(&ccm->ccgr10, CCM_REG_CTRL_MASK, CCM_CCGR10_NFC_CTRL_MASK);
 
-	clrsetbits_le32(&anadig->pll5_ctrl, ANADIG_PLL5_CTRL_BYPASS |
-			ANADIG_PLL5_CTRL_POWERDOWN, ANADIG_PLL5_CTRL_ENABLE |
-			ANADIG_PLL5_CTRL_DIV_SELECT);
-
-	if (is_colibri_vf61()) {
-		clrsetbits_le32(&anadig->pll2_ctrl, ANADIG_PLL5_CTRL_BYPASS |
-				ANADIG_PLL2_CTRL_POWERDOWN,
-				ANADIG_PLL2_CTRL_ENABLE |
-				ANADIG_PLL2_CTRL_DIV_SELECT);
-	}
 
 	clrsetbits_le32(&anadig->pll1_ctrl, ANADIG_PLL1_CTRL_POWERDOWN,
 			ANADIG_PLL1_CTRL_ENABLE | ANADIG_PLL1_CTRL_DIV_SELECT);
 
-	clrsetbits_le32(&ccm->ccr, CCM_CCR_OSCNT_MASK,
+	clrsetbits_le32(&ccm->ccr, CCM_REG_CTRL_MASK,
 			CCM_CCR_FIRC_EN | CCM_CCR_OSCNT(5));
 
-	/* See "Typical PLL Configuration" */
-	if (is_colibri_vf61()) {
-		pfd_clk_sel = CCM_CCSR_PLL1_PFD_CLK_SEL(1);
-		ddr_clk_sel = CCM_CCSR_DDRC_CLK_SEL(0);
-	} else {
-		pfd_clk_sel = CCM_CCSR_PLL1_PFD_CLK_SEL(3);
-		ddr_clk_sel = CCM_CCSR_DDRC_CLK_SEL(1);
-	}
-
-	clrsetbits_le32(&ccm->ccsr, CCM_REG_CTRL_MASK, pfd_clk_sel |
-			CCM_CCSR_PLL2_PFD4_EN | CCM_CCSR_PLL2_PFD3_EN |
-			CCM_CCSR_PLL2_PFD2_EN | CCM_CCSR_PLL2_PFD1_EN |
-			CCM_CCSR_PLL1_PFD4_EN | CCM_CCSR_PLL1_PFD3_EN |
-			CCM_CCSR_PLL1_PFD2_EN | CCM_CCSR_PLL1_PFD1_EN |
-			ddr_clk_sel | CCM_CCSR_FAST_CLK_SEL(1) |
-			CCM_CCSR_SYS_CLK_SEL(4));
+	clrsetbits_le32(&ccm->ccsr, CCM_REG_CTRL_MASK,
+		        CCM_CCSR_DAP_EN          | CCM_CCSR_PLL1_PFD_CLK_SEL(3) |
+			CCM_CCSR_PLL2_PFD4_EN    | CCM_CCSR_PLL2_PFD3_EN |
+			CCM_CCSR_PLL2_PFD2_EN    | CCM_CCSR_PLL2_PFD1_EN |
+			CCM_CCSR_PLL1_PFD4_EN    | CCM_CCSR_PLL1_PFD3_EN |
+			CCM_CCSR_PLL1_PFD2_EN    | CCM_CCSR_PLL1_PFD1_EN |
+		        CCM_CCSR_DDRC_CLK_SEL(1) | CCM_CCSR_FAST_CLK_SEL(1) |
+		        CCM_CCSR_SLOW_CLK_SEL(1) | CCM_CCSR_SYS_CLK_SEL(4));
 
 	clrsetbits_le32(&ccm->cacrr, CCM_REG_CTRL_MASK,
-			CCM_CACRR_IPG_CLK_DIV(1) | CCM_CACRR_BUS_CLK_DIV(2) |
-			CCM_CACRR_ARM_CLK_DIV(0));
-	clrsetbits_le32(&ccm->cscmr1, CCM_REG_CTRL_MASK,
-			CCM_CSCMR1_ESDHC1_CLK_SEL(3) |
-			CCM_CSCMR1_NFC_CLK_SEL(0));
-	clrsetbits_le32(&ccm->cscdr1, CCM_REG_CTRL_MASK,
-			CCM_CSCDR1_RMII_CLK_EN);
+			CCM_CACRR_IPG_CLK_DIV(1) | CCM_CACRR_BUS_CLK_DIV(2));
+
+	clrsetbits_le32(&ccm->cscmr1, CCM_REG_CTRL_MASK, CCM_CSCMR1_ESDHC1_CLK_SEL(3));
+
 	clrsetbits_le32(&ccm->cscdr2, CCM_REG_CTRL_MASK,
-			CCM_CSCDR2_ESDHC1_EN | CCM_CSCDR2_ESDHC1_CLK_DIV(0) |
-			CCM_CSCDR2_NFC_EN);
-	clrsetbits_le32(&ccm->cscdr3, CCM_REG_CTRL_MASK,
-			CCM_CSCDR3_NFC_PRE_DIV(5));
-	clrsetbits_le32(&ccm->cscmr2, CCM_REG_CTRL_MASK,
-			CCM_CSCMR2_RMII_CLK_SEL(2));
+			CCM_CSCDR2_ESDHC1_EN   | CCM_CSCDR2_ESDHC1_CLK_DIV(1) |
+			CCM_CSCDR2_NFC_CLK_INV | CCM_CSCDR2_NFC_EN |
+                        CCM_CSCDR2_NFC_FRAC_DIV(4));
 }
 
 static void mscm_init(void)
@@ -433,8 +378,12 @@ static void mscm_init(void)
 	struct mscm_ir *mscmir = (struct mscm_ir *)MSCM_IR_BASE_ADDR;
 	int i;
 
-	for (i = 0; i < MSCM_IRSPRC_NUM; i++)
+        /*
+	 * Route all interrupt signals to the Cortex-A5.
+	 */
+	for (i = 0; i < MSCM_IRSPRC_NUM; i++) {
 		writew(MSCM_IRSPRC_CP0_EN, &mscmir->irsprc[i]);
+        }
 }
 
 int board_phy_config(struct phy_device *phydev)
@@ -453,6 +402,8 @@ int board_early_init_f(void)
 	setup_iomux_uart();
 	setup_iomux_enet();
 	setup_iomux_i2c();
+        //spi
+        //esdhc
 #ifdef CONFIG_NAND_VF610_NFC
 	setup_iomux_nfc();
 #endif
@@ -460,11 +411,6 @@ int board_early_init_f(void)
 #ifdef CONFIG_VYBRID_GPIO
 	setup_iomux_gpio();
 #endif
-
-#ifdef CONFIG_FSL_DSPI
-	setup_iomux_dspi();
-#endif
-
 	return 0;
 }
 
@@ -501,24 +447,8 @@ int board_late_init(void)
 
 int board_init(void)
 {
-	struct scsc_reg *scsc = (struct scsc_reg *)SCSC_BASE_ADDR;
-
 	/* address of boot parameters */
 	gd->bd->bi_boot_params = PHYS_SDRAM + 0x100;
-
-	/*
-	 * Enable external 32K Oscillator
-	 *
-	 * The internal clock experiences significant drift
-	 * so we must use the external oscillator in order
-	 * to maintain correct time in the hwclock
-	 */
-
-	setbits_le32(&scsc->sosc_ctr, SCSC_SOSC_CTR_SOSC_EN);
-
-#ifdef CONFIG_USB_EHCI_VF
-	gpio_request(USB_CDET_GPIO, "usb-cdet-gpio");
-#endif
 
 	gpio_request(RX232_EN_GPIO, "rx232-en-gpio");
 	gpio_direction_output(RX232_EN_GPIO, 1);
@@ -528,12 +458,14 @@ int board_init(void)
 
 int checkboard(void)
 {
-	if (is_colibri_vf61())
-		puts("Board: Colibri VF61\n");
-	else
-		puts("Board: Colibri VF50\n");
-
+	puts("Board: 1189 - Datasoft RAP\n");
 	return 0;
+}
+
+int misc_init_r(void)
+{
+        mac_read_from_eeprom();
+        return 0;
 }
 
 #ifdef CONFIG_USB_EHCI_VF
@@ -557,9 +489,10 @@ int board_usb_phy_mode(int port)
 {
 	switch (port) {
 	case 0:
+		/* Port 0 is used only in client mode */
 	        return USB_INIT_DEVICE;
 	case 1:
-		/* Port 1 is used only in host mode on Colibri Vybrid modules */
+		/* Port 1 is used only in host mode */
 		return USB_INIT_HOST;
 	default:
 		/*

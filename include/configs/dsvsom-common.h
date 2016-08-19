@@ -43,6 +43,7 @@
 #define CONFIG_VERSION_VARIABLE
 #define CONFIG_BAUDRATE			115200
 
+#undef CONFIG_DM_I2C
 #define CONFIG_SYS_I2C
 #define CONFIG_SYS_I2C_MXC
 #define CONFIG_SYS_I2C_MXC_I2C1		/* enable I2C bus 1 */
