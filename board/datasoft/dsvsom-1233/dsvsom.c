@@ -247,6 +247,24 @@ static void setup_iomux_gpio(void)
 }
 #endif
 
+static void setup_iomux_enet(void)
+{
+	static const iomux_v3_cfg_t enet_pads[] = {
+		NEW_PAD_CTRL(VF610_PAD_PTA6__RMII0_CLKIN, ENET_PAD_CTRL),
+		NEW_PAD_CTRL(VF610_PAD_PTC10__RMII1_MDIO, ENET_PAD_CTRL),
+		NEW_PAD_CTRL(VF610_PAD_PTC9__RMII1_MDC, ENET_PAD_CTRL),
+		NEW_PAD_CTRL(VF610_PAD_PTC11__RMII1_CRS_DV, ENET_PAD_CTRL),
+		NEW_PAD_CTRL(VF610_PAD_PTC12__RMII1_RD1, ENET_PAD_CTRL),
+		NEW_PAD_CTRL(VF610_PAD_PTC13__RMII1_RD0, ENET_PAD_CTRL),
+		NEW_PAD_CTRL(VF610_PAD_PTC14__RMII1_RXER, ENET_PAD_CTRL),
+		NEW_PAD_CTRL(VF610_PAD_PTC15__RMII1_TD1, ENET_PAD_CTRL),
+		NEW_PAD_CTRL(VF610_PAD_PTC16__RMII1_TD0, ENET_PAD_CTRL),
+		NEW_PAD_CTRL(VF610_PAD_PTC17__RMII1_TXEN, ENET_PAD_CTRL),
+	};
+
+	imx_iomux_v3_setup_multiple_pads(enet_pads, ARRAY_SIZE(enet_pads));
+}
+
 static inline int is_vf61(void)
 {
 	struct mscm *mscm = (struct mscm *)MSCM_BASE_ADDR;
@@ -262,7 +280,6 @@ static void clock_init(void)
 {
 	struct ccm_reg *ccm = (struct ccm_reg *)CCM_BASE_ADDR;
 	struct anadig_reg *anadig = (struct anadig_reg *)ANADIG_BASE_ADDR;
-	u32 pfd_clk_sel, ddr_clk_sel;
 
 	clrsetbits_le32(&ccm->ccgr0, CCM_REG_CTRL_MASK,
 			CCM_CCGR0_UART0_CTRL_MASK | CCM_CCGR0_UART1_CTRL_MASK |
@@ -285,9 +302,12 @@ static void clock_init(void)
 	clrsetbits_le32(&ccm->ccgr6, CCM_REG_CTRL_MASK,
 			CCM_CCGR6_OCOTP_CTRL_MASK | CCM_CCGR6_DDRMC_CTRL_MASK);
 	clrsetbits_le32(&ccm->ccgr7, CCM_REG_CTRL_MASK,
-			CCM_CCGR7_SDHC1_CTRL_MASK);
+			CCM_CCGR7_SDHC0_CTRL_MASK);
+	/*
 	clrsetbits_le32(&ccm->ccgr9, CCM_REG_CTRL_MASK,
 			CCM_CCGR9_FEC0_CTRL_MASK | CCM_CCGR9_FEC1_CTRL_MASK);
+	*/
+	clrbits_le32(&ccm->ccgr9, CCM_REG_CTRL_MASK);
 	clrsetbits_le32(&ccm->ccgr10, CCM_REG_CTRL_MASK,
 			CCM_CCGR10_NFC_CTRL_MASK);
 
@@ -316,38 +336,27 @@ static void clock_init(void)
 	clrsetbits_le32(&ccm->ccr, CCM_CCR_OSCNT_MASK,
 			CCM_CCR_FIRC_EN | CCM_CCR_OSCNT(5));
 
-	/* See "Typical PLL Configuration" */
-	if (is_vf61()) {
-		pfd_clk_sel = CCM_CCSR_PLL1_PFD_CLK_SEL(1);
-		ddr_clk_sel = CCM_CCSR_DDRC_CLK_SEL(0);
-	} else {
-		pfd_clk_sel = CCM_CCSR_PLL1_PFD_CLK_SEL(3);
-		ddr_clk_sel = CCM_CCSR_DDRC_CLK_SEL(1);
-	}
-
-	clrsetbits_le32(&ccm->ccsr, CCM_REG_CTRL_MASK, pfd_clk_sel |
-			CCM_CCSR_PLL2_PFD4_EN | CCM_CCSR_PLL2_PFD3_EN |
-			CCM_CCSR_PLL2_PFD2_EN | CCM_CCSR_PLL2_PFD1_EN |
-			CCM_CCSR_PLL1_PFD4_EN | CCM_CCSR_PLL1_PFD3_EN |
-			CCM_CCSR_PLL1_PFD2_EN | CCM_CCSR_PLL1_PFD1_EN |
-			ddr_clk_sel | CCM_CCSR_FAST_CLK_SEL(1) |
-			CCM_CCSR_SYS_CLK_SEL(4));
+	clrsetbits_le32(&ccm->ccsr, CCM_REG_CTRL_MASK,
+		CCM_CCSR_DAP_EN | CCM_CCSR_PLL1_PFD_CLK_SEL(3) |
+		CCM_CCSR_PLL2_PFD4_EN | CCM_CCSR_PLL2_PFD3_EN |
+		CCM_CCSR_PLL2_PFD2_EN | CCM_CCSR_PLL2_PFD1_EN |
+		CCM_CCSR_PLL1_PFD4_EN | CCM_CCSR_PLL1_PFD3_EN |
+		CCM_CCSR_PLL1_PFD2_EN | CCM_CCSR_PLL1_PFD1_EN |
+		CCM_CCSR_DDRC_CLK_SEL(1) | CCM_CCSR_FAST_CLK_SEL(1) |
+		CCM_CCSR_SLOW_CLK_SEL(1) | CCM_CCSR_SYS_CLK_SEL(4));
 
 	clrsetbits_le32(&ccm->cacrr, CCM_REG_CTRL_MASK,
 			CCM_CACRR_IPG_CLK_DIV(1) | CCM_CACRR_BUS_CLK_DIV(2) |
 			CCM_CACRR_ARM_CLK_DIV(0));
+
 	clrsetbits_le32(&ccm->cscmr1, CCM_REG_CTRL_MASK,
 			CCM_CSCMR1_ESDHC1_CLK_SEL(3) |
 			CCM_CSCMR1_NFC_CLK_SEL(0));
-	clrsetbits_le32(&ccm->cscdr1, CCM_REG_CTRL_MASK,
-			CCM_CSCDR1_RMII_CLK_EN);
 	clrsetbits_le32(&ccm->cscdr2, CCM_REG_CTRL_MASK,
 			CCM_CSCDR2_ESDHC1_EN | CCM_CSCDR2_ESDHC1_CLK_DIV(0) |
 			CCM_CSCDR2_NFC_EN);
 	clrsetbits_le32(&ccm->cscdr3, CCM_REG_CTRL_MASK,
 			CCM_CSCDR3_NFC_PRE_DIV(5));
-	clrsetbits_le32(&ccm->cscmr2, CCM_REG_CTRL_MASK,
-			CCM_CSCMR2_RMII_CLK_SEL(2));
 }
 
 static void mscm_init(void)
@@ -375,6 +384,7 @@ int board_early_init_f(void)
 	setup_iomux_uart();
 	setup_iomux_i2c();
 	setup_iomux_esdhc();
+	setup_iomux_enet();
 #ifdef CONFIG_NAND_VF610_NFC
 	setup_iomux_nfc();
 #endif
