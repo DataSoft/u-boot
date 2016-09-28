@@ -107,7 +107,7 @@
 	"nand read ${fdt_addr_r} ${fdt_partition}; " \
 	"bootz ${kernel_addr_r} - ${fdt_addr_r}\0" \
 
-#define DFU_BOOT_DELAY "5" /* How long to wait for dfu activity before booting from nand*/
+#define DFU_BOOT_DELAY "1" /* How long to wait for dfu activity before booting from nand*/
 #define CONFIG_BOOTCOMMAND "dfu 0 nand 0 " DFU_BOOT_DELAY "; run ubiboot"
 
 /* WARNING: This needs to match the MTDPARTS_DEFAULT macro above*/
