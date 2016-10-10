@@ -257,7 +257,8 @@ dtb-$(CONFIG_VF610) += vf500-colibri.dtb \
 	vf610-twr.dtb \
 	pcm052.dtb \
 	dsvsom-1189.dtb \
-	dsvsom-1233.dtb
+	dsvsom-1233.dtb \
+	dsvsom-1279.dtb
 
 dtb-$(CONFIG_SOC_KEYSTONE) += k2hk-evm.dtb \
 	k2l-evm.dtb \

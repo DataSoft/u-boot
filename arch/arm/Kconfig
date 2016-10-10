@@ -654,6 +654,10 @@ config TARGET_DSVSOM_1233
 	bool "Support DSVSOM-1233 (Universal Sidebridge)"
 	select CPU_V7
 
+config TARGET_DSVSOM_1279
+	bool "Support DSVSOM-1279 (Sidebridge-Iridium)"
+	select CPU_V7
+
 config ARCH_ZYNQ
 	bool "Xilinx Zynq Platform"
 	select CPU_V7
@@ -938,6 +942,7 @@ source "board/denx/m28evk/Kconfig"
 source "board/denx/m53evk/Kconfig"
 source "board/datasoft/dsvsom-1189/Kconfig"
 source "board/datasoft/dsvsom-1233/Kconfig"
+source "board/datasoft/dsvsom-1279/Kconfig"
 source "board/freescale/ls2080a/Kconfig"
 source "board/freescale/ls2080aqds/Kconfig"
 source "board/freescale/ls2080ardb/Kconfig"
