@@ -14,7 +14,6 @@
  *
  * SPDX-License-Identifier:	GPL-2.0+
  */
-
 #include <errno.h>
 #include <common.h>
 #include <malloc.h>
@@ -178,6 +177,12 @@ static void dnload_request_complete(struct usb_ep *ep, struct usb_request *req)
 	}
 }
 
+static void command_request_complete(struct usb_ep *ep, struct usb_request *req)
+{
+	printf("Running command[%d]: %s\n", req->length, (char *) req->buf);
+	run_command(req->buf, 0);
+}
+
 static void dnload_request_flush(struct usb_ep *ep, struct usb_request *req)
 {
 	struct f_dfu *f_dfu = req->context;
@@ -265,6 +270,15 @@ static int handle_dnload(struct usb_gadget *gadget, u16 len)
 		f_dfu->dfu_state = DFU_STATE_dfuMANIFEST_SYNC;
 
 	req->complete = dnload_request_complete;
+
+	return len;
+}
+
+static int handle_command(struct usb_gadget *gadget, u16 len)
+{
+	struct usb_composite_dev *cdev = get_gadget_data(gadget);
+	struct usb_request *req = cdev->req;
+	req->complete = command_request_complete;
 
 	return len;
 }
@@ -375,6 +389,9 @@ static int state_dfu_idle(struct f_dfu *f_dfu,
 		f_dfu->dfu_state = DFU_STATE_appIDLE;
 
 		g_dnl_trigger_detach();
+		break;
+	case USB_REQ_DFU_COMMAND:
+		value = handle_command(gadget, len);
 		break;
 	default:
 		f_dfu->dfu_state = DFU_STATE_dfuERROR;
