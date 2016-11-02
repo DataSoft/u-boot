@@ -33,6 +33,9 @@ DECLARE_GLOBAL_DATA_PTR;
 
 #define RX232_EN_GPIO		24
 #define SBI_PWR_IND_GPIO	108
+#define PGOOD_RADIO_GPIO        109
+#define SBI_PWR_SRC_GPIO        111
+#define SBI_WAKE_GPIO           118
 
 static struct ddrmc_cr_setting colibri_vf_cr_settings[] = {
 	/* levelling */
@@ -411,6 +414,7 @@ int board_late_init(void)
 int board_init(void)
 {
 	struct scsc_reg *scsc = (struct scsc_reg *)SCSC_BASE_ADDR;
+        int source = 0;
 
 	/* address of boot parameters */
 	gd->bd->bi_boot_params = PHYS_SDRAM + 0x100;
@@ -427,8 +431,25 @@ int board_init(void)
 
 	gpio_request(RX232_EN_GPIO, "rx232-en-gpio");
 	gpio_direction_output(RX232_EN_GPIO, 1);
+
+        // Initialize the wake GPIO to 0 
+	gpio_request(SBI_WAKE_GPIO, "sbi-wake-gpio");
+	gpio_direction_output(SBI_WAKE_GPIO, 0);
+
+        // Inform the Iridium Module that we are here
 	gpio_request(SBI_PWR_IND_GPIO, "sbi-pwr-ind-gpio");
 	gpio_direction_output(SBI_PWR_IND_GPIO, 1);
+
+        // Read the Power Good GPIO
+        gpio_request(PGOOD_RADIO_GPIO, "pgood-radio-gpio");
+        gpio_direction_input(PGOOD_RADIO_GPIO);
+        source = gpio_get_value(PGOOD_RADIO_GPIO);
+
+        // Set the Power Source GPIO given the results of Power Good
+        gpio_request(SBI_PWR_SRC_GPIO, "sbi-pwr-src-gpio");
+        gpio_direction_output(SBI_PWR_SRC_GPIO, source);
+
+        printf( "Power source:'%s'\n", source ? "RADIO" : "USB" );
 
 	return 0;
 }
