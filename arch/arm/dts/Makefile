@@ -256,6 +256,7 @@ dtb-$(CONFIG_VF610) += vf500-colibri.dtb \
 	vf610-colibri.dtb \
 	vf610-twr.dtb \
 	pcm052.dtb \
+	dsvsom-1138.dtb \
 	dsvsom-1189.dtb \
 	dsvsom-1233.dtb \
 	dsvsom-1279.dtb
